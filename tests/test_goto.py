@@ -1,5 +1,6 @@
 import goto
 
+
 def test_jump_back():
     @goto.goto
     def loop_sum(limit):
@@ -13,6 +14,7 @@ def test_jump_back():
 
     assert loop_sum(5) == 15
 
+
 def test_jump_forward():
     @goto.goto
     def jmp():
@@ -21,4 +23,5 @@ def test_jump_forward():
         x = 1
         jmp.label("end")
         return x
+
     assert jmp() == 0
