@@ -29,7 +29,7 @@ class __GotoDocorator:
                 if i2.argval == "label":
                     targets[i3.argval] = (
                         i3.offset + 6
-                    ) // 2  # I have no idea why I need to divide by 2
+                    ) // 2  # divide by 2 to get instruction offset from byte offset
                 elif i2.argval == "goto":
                     gotos[i1.offset] = i3.argval
 
