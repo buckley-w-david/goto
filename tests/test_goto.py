@@ -3,16 +3,16 @@ import goto
 
 def test_jump_back():
     @goto.goto
-    def loop_sum(limit):
-        total = 0
-        loop_sum.label("loop")
-        total += limit
-        limit -= 1
-        if limit > 0:
-            loop_sum.goto("loop")
+    def factorial(n):
+        total = 1
+        factorial.label("loop")
+        total *= n
+        n -= 1
+        if n > 0:
+            factorial.goto("loop")
         return total
 
-    assert loop_sum(5) == 15
+    assert factorial(5) == 120
 
 
 def test_jump_forward():
