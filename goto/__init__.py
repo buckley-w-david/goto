@@ -19,13 +19,10 @@ class __GotoDocorator:
         targets = {}
         gotos = { }
         for i1, i2, i3 in zip(instr, instr[1:], instr[2:]):
-            if (i1.opcode == _LOAD_GLOBAL or i1.opcode == _LOAD_DEREF) and i1.argval == f.__name__ and \
-               i2.opcode == _LOAD_METHOD and i2.argval == 'label' and \
-               i3.opcode == _LOAD_CONST:
+            if (i1.opcode == _LOAD_GLOBAL or i1.opcode == _LOAD_DEREF) and i1.argval == f.__name__ and i3.opcode == _LOAD_CONST:
+               if i2.opcode == _LOAD_METHOD and i2.argval == 'label':
                    targets[i3.argval] = (i3.offset + 6) // 2 # I have no idea why I need to divide by 2
-            elif (i1.opcode == _LOAD_GLOBAL or i1.opcode == _LOAD_DEREF) and i1.argval == f.__name__ and \
-               i2.opcode == _LOAD_METHOD and i2.argval == 'goto' and \
-               i3.opcode == _LOAD_CONST:
+               elif i2.opcode == _LOAD_METHOD and i2.argval == 'goto':
                    gotos[i1.offset] = i3.argval
 
         writer = io.BytesIO()
@@ -34,20 +31,17 @@ class __GotoDocorator:
                 target = targets[gotos[i1.offset]]
                 writer.write(bytes([_JUMP_ABSOLUTE, target]))
             else:
-                if i1.arg is not None:
-                    writer.write(bytes([i1.opcode, i1.arg]))
-                else:
-                    writer.write(bytes([i1.opcode, 0]))
+                writer.write(bytes([i1.opcode, i1.arg or 0]))
 
         bytecode = writer.getvalue()
         code = code.codeobj.replace(co_code=bytecode)
         
         self.func = FunctionType(code, f.__globals__, f.__name__, f.__defaults__, f.__closure__)
 
-    def goto(self, target):
+    def goto(self, _: str):
         pass
 
-    def label(self, target):
+    def label(self, _: str):
         pass
 
     def __call__(self, *args, **kwargs):
